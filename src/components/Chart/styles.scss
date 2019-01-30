@@ -1,0 +1,10 @@
+.charts-block {
+  text-align: center;
+  &__item {
+    display: inline-block;
+    margin-top: 10px;
+    &_desc {
+      color: #00959c;
+    }
+  }
+}
