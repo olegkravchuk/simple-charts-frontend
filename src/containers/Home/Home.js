@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { DatePicker, Spin, Select } from 'antd';
+import { DatePicker, Spin, Select, Button } from 'antd';
 import { getBuyers } from '../../api/buyer';
 import { getDepartments } from '../../api/department';
 import { getRequesters } from '../../api/requester';
@@ -23,6 +23,7 @@ class Home extends PureComponent {
         selectedBuyers: [],
         selectedDepartments: [],
         selectedRequesters: [],
+        selectedDate: [],
 
         allInformation: [],
         information: [],
@@ -76,9 +77,24 @@ class Home extends PureComponent {
         const [ from, to ] = value;
 
         this.setState({
-            isLoading: true
+            isLoading: true,
+            selectedDate: value,
         });
+        this.onGetInformation(from, to);
+    }
 
+    onClearFilters = () => {
+        this.setState({
+            selectedBuyers: [],
+            selectedDepartments: [],
+            selectedRequesters: [],
+            selectedDate: [],
+            isLoading: true,
+        });
+        this.onGetInformation();
+    }
+
+    onGetInformation = (from, to) => {
         getInformation({ from: from && from.format('MM-DD-YYYY'), to: to && to.format('MM-DD-YYYY')}).then(response => {
             const { selectedBuyers, selectedDepartments, selectedRequesters } = this.state;
             this.setState({
@@ -90,7 +106,20 @@ class Home extends PureComponent {
     }
 
     render() {
-        const { buyers, departments, requesters, information, isLoading } = this.state;
+        const {
+            buyers,
+            departments,
+            requesters,
+            information,
+            isLoading,
+            selectedBuyers,
+            selectedDepartments,
+            selectedRequesters,
+            selectedDate,
+        } = this.state;
+
+        const disableClear = !selectedBuyers.length && !selectedDepartments.length && !selectedRequesters.length && !selectedDate.length;
+
         return (
             <Spin size="large" spinning={isLoading}>
                 <div className="home">
@@ -103,6 +132,7 @@ class Home extends PureComponent {
                                 onChange={this.onChangeTeamMember}
                                 showSearch
                                 filterOption={filterOption}
+                                value={selectedBuyers}
                             >
                                 {buyers.map(item => <Option key={item.id}>{item.name}</Option>)}
                             </Select>
@@ -114,6 +144,7 @@ class Home extends PureComponent {
                                 onChange={this.onChangeDepartment}
                                 showSearch
                                 filterOption={filterOption}
+                                value={selectedDepartments}
                             >
                                 {departments.map(item => <Option key={item.id}>{item.name}</Option>)}
                             </Select>
@@ -125,13 +156,23 @@ class Home extends PureComponent {
                                 onChange={this.onChangeCountry}
                                 showSearch
                                 filterOption={filterOption}
+                                value={selectedRequesters}
                             >
                                 {requesters.map(item => <Option key={item.id}>{item.name}</Option>)}
                             </Select>
                         </div>
-
                         <div className="top-filters__right">
-                            <RangePicker onChange={this.onChangeDate} />
+                            <div className="date-select">
+                                <RangePicker value={selectedDate} onChange={this.onChangeDate} />
+                            </div>
+                            <Button
+                                className="clear-btn"
+                                type="primary"
+                                onClick={this.onClearFilters}
+                                disabled={disableClear}
+                            >
+                                Clear
+                            </Button>
                         </div>
                     </div>
                     {!isLoading && information.length ?

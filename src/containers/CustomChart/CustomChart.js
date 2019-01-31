@@ -1,5 +1,7 @@
 import React, { PureComponent } from 'react';
-import { DatePicker, Spin, Select, Cascader } from 'antd';
+import { DatePicker, Spin, Select, Cascader, Button } from 'antd';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 import { getBuyers } from '../../api/buyer';
 import { getDepartments } from '../../api/department';
 import { getRequesters } from '../../api/requester';
@@ -20,8 +22,9 @@ class CustomChart extends PureComponent {
     state = {
         allInformation: [],
         information: [],
-        selectedMeasures: null,
+        selectedMeasures: [],
         selectedDimension: [],
+        selectedDate: [],
         options: [],
         isLoading: false,
     };
@@ -79,8 +82,22 @@ class CustomChart extends PureComponent {
 
         this.setState({
             isLoading: true,
+            selectedDate: value,
         });
+        this.onGetInformation(from, to);
+    }
 
+    onClearFilters = () => {
+        this.setState({
+            selectedMeasures: [],
+            selectedDimension: [],
+            selectedDate: [],
+            isLoading: true,
+        });
+        this.onGetInformation();
+    }
+
+    onGetInformation = (from, to) => {
         getInformation({ from: from && from.format('MM-DD-YYYY'), to: to && to.format('MM-DD-YYYY')}).then(response => {
             const { selectedDimension,  selectedMeasures } = this.state;
             this.setState({
@@ -91,9 +108,21 @@ class CustomChart extends PureComponent {
         });
     }
 
+    onSaveChart = () => {
+        const input = document.getElementById('print-chart');
+        html2canvas(input)
+            .then((canvas) => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF();
+                pdf.addImage(imgData, 'JPEG', 0, 0, 200, 100);
+                pdf.save("chart.pdf");
+            })
+        ;
+    }
+
     renderChart = () => {
         const { isLoading, information, selectedMeasures, selectedDimension } = this.state;
-        if (!isLoading && information.length && selectedMeasures && selectedDimension.length) {
+        if (!isLoading && information.length && selectedMeasures.length && selectedDimension.length) {
             const data = information.map(item => Number(item[selectedMeasures])).filter(n =>
                 !Number.isNaN(n)).map((y, i) => ({ x: `${i}`, y, }));
 
@@ -103,7 +132,9 @@ class CustomChart extends PureComponent {
     }
 
     render() {
-        const { options, selectedMeasures, selectedDimension, isLoading } = this.state;
+        const { options, selectedMeasures, selectedDimension, selectedDate, isLoading, information } = this.state;
+        const disableClear = !selectedMeasures.length && !selectedDimension.length && !selectedDate.length;
+        const anableSaveChart = !isLoading && information.length && selectedMeasures.length && selectedDimension.length;
         return (
             <Spin size="large" spinning={isLoading}>
                 <div className="custom-chart">
@@ -114,6 +145,7 @@ class CustomChart extends PureComponent {
                                 options={options}
                                 onChange={this.onChangeDimension}
                                 placeholder="Select dimension"
+                                value={selectedDimension}
                             />
 
                             <Select
@@ -121,16 +153,35 @@ class CustomChart extends PureComponent {
                                 placeholder="Select measure"
                                 onChange={this.onChangeMeasures}
                                 showSearch
+                                value={selectedMeasures}
                             >
                                 {measures.map(item => <Option key={item.value}>{item.title}</Option>)}
                             </Select>
                         </div>
 
                         <div className="top-filters__right">
-                            <RangePicker onChange={this.onChangeDate} />
+                            <div className="date-select">
+                                <RangePicker value={selectedDate} onChange={this.onChangeDate} />
+                            </div>
+                            <Button
+                                className="clear-btn"
+                                type="primary"
+                                onClick={this.onSaveChart}
+                                disabled={!anableSaveChart}
+                            >
+                                Save
+                            </Button>
+                            <Button
+                                className="clear-btn"
+                                type="primary"
+                                onClick={this.onClearFilters}
+                                disabled={disableClear}
+                            >
+                                Clear
+                            </Button>
                         </div>
                     </div>
-                    {!selectedMeasures || !selectedDimension.length ?
+                    {!selectedMeasures.length || !selectedDimension.length ?
                         <div className="no-data">
                             Please enter Measure and Dimension
                         </div> : null

@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import { XYPlot, VerticalBarSeries } from 'react-vis';
+import { formatNumber } from './utils';
 import './styles.scss';
 
 
@@ -136,13 +137,13 @@ class Charts extends PureComponent {
                 <div className="charts-block__item">
                     {requestChart.chart}
                     <div className="charts-block__item_desc">
-                        {`${requestChart.totalRequests} Requests`}
+                        {`${formatNumber(requestChart.totalRequests)} Requests`}
                     </div>
                 </div>
                 <div className="charts-block__item">
                     {spendPurchaseChart.chart}
                     <div className="charts-block__item_desc">
-                        {`$${spendPurchaseChart.totalQuotePrice} in spend (only on 'Closed Accepted' requests)`}
+                        {`$${formatNumber(spendPurchaseChart.totalQuotePrice)} in spend (only on 'Closed Accepted' requests)`}
                     </div>
                 </div>
                 <div className="charts-block__item">
@@ -154,13 +155,13 @@ class Charts extends PureComponent {
                 <div className="charts-block__item">
                     {closedRequestsChart.chart}
                     <div className="charts-block__item_desc">
-                        {`${closedRequestsChart.totalRequests} Closed requests`}
+                        {`${formatNumber(closedRequestsChart.totalRequests)} Closed requests`}
                     </div>
                 </div>
                 <div className="charts-block__item">
                     {savingsAchievedChart.chart}
                     <div className="charts-block__item_desc">
-                        {`$${savingsAchievedChart.totalSavingsAmount} in savings (only on 'Closed Accepted' requests)`}
+                        {`$${formatNumber(savingsAchievedChart.totalSavingsAmount)} in savings (only on 'Closed Accepted' requests)`}
                     </div>
                 </div>
                 <div className="charts-block__item">

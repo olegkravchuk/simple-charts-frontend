@@ -7,14 +7,13 @@
     display: block;
     &__left {
       display: inline-block;
-      width: 60%;
       .dimensions {
         display: inline-block;
-        width: 30%;
+        width: 285px;
       }
       .measures {
         display: inline-block;
-        width: 30%;
+        width: 285px;
         margin-left: 15px;
       }
       .ant-select-selection {
@@ -32,11 +31,27 @@
     }
     &__right {
       display: inline-block;
-      width: 40%;
-      text-align: right;
-      .ant-calendar-picker-input {
-        border: 1px solid #1f5b88;
-        color: #1f5b88;
+      margin-left: 15px;
+      .date-select {
+        display: inline-block;
+        width: 285px;
+        .ant-calendar-picker {
+          max-width: 300px;
+        }
+        .ant-calendar-picker-input {
+          border: 1px solid #1f5b88;
+          color: #1f5b88;
+        }
+      }
+      .clear-btn {
+        width: 100px;
+        margin-left: 15px;
+        background-color: #005b8c;
+        border-color: #005b8c;
+        &[disabled] {
+          background-color: #f5f5f5;
+          border-color: #d9d9d9;
+        }
       }
     }
   }
