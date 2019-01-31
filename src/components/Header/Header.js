@@ -44,7 +44,7 @@ class Header extends PureComponent {
                     title={
                         <span className="submenu-title-wrapper">
                             <Icon type="user" style={{ fontSize: '20px' }} />
-                            Oleg Kravchuk
+                            User Name
                         </span>
                     }
                 >
