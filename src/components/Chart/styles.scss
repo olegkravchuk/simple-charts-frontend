@@ -3,8 +3,13 @@
   &__item {
     display: inline-block;
     margin-top: 10px;
+    min-height: 300px;
     &_desc {
       color: #00959c;
     }
+  }
+  .no-data-chart {
+    margin-bottom: 150px;
+    font-size: 16px;
   }
 }

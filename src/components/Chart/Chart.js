@@ -11,11 +11,13 @@ class Chart extends Component {
         return {
             totalRequests: requestNumbers.reduce((a, b) => a + b, 0),
             chart: requestNumbers.length ?
-                 <VerticalBarSeries
-                     animation
-                     data={requestNumbers.map((n, i) => ({ x: `${i}`, y: n }))}
-                /> :
-                <div>No Data</div>
+                <XYPlot xType="ordinal" width={400} height={300}>
+                     <VerticalBarSeries
+                         animation
+                         data={requestNumbers.map((n, i) => ({ x: `${i}`, y: n }))}
+                    />
+                </XYPlot> :
+                <div className="no-data-chart">No Data</div>
         }
     }
 
@@ -28,11 +30,13 @@ class Chart extends Component {
         return {
             totalQuotePrice: Math.round(spendPurchase.reduce((a, b) => a + b.total_quote_price, 0)),
             chart: spendPurchase.length ?
-                 <VerticalBarSeries
-                     animation
-                     data={spendPurchase.map((n, i) => ({ x: `${i}`, y: n.total_quote_price }))}
-                /> :
-                <div>No Data</div>
+                <XYPlot xType="ordinal" width={400} height={300}>
+                     <VerticalBarSeries
+                         animation
+                         data={spendPurchase.map((n, i) => ({ x: `${i}`, y: n.total_quote_price }))}
+                    />
+                </XYPlot>:
+                <div className="no-data-chart">No Data</div>
         }
     }
 
@@ -48,11 +52,13 @@ class Chart extends Component {
         return {
             averageOfRequest: Math.round(provideQuote.reduce((a, b) => a + b.request_to_quote_cycle_time, 0) / provideQuote.length),
             chart: provideQuote.length ?
-                 <VerticalBarSeries
-                     animation
-                     data={provideQuote.map((n, i) => ({ x: `${i}`, y: n.request_number }))}
-                /> :
-                <div>No Data</div>
+                <XYPlot xType="ordinal" width={400} height={300}>
+                     <VerticalBarSeries
+                         animation
+                         data={provideQuote.map((n, i) => ({ x: `${i}`, y: n.request_number }))}
+                    />
+                </XYPlot> :
+                <div className="no-data-chart">No Data</div>
         }
     }
 
@@ -65,11 +71,13 @@ class Chart extends Component {
         return {
             totalRequests: closedRequests.reduce((a, b) => a + b.request_number, 0),
             chart: closedRequests.length ?
-                 <VerticalBarSeries
-                     animation
-                     data={closedRequests.map((n, i) => ({ x: `${i}`, y: n.request_number }))}
-                /> :
-                <div>No Data</div>
+                <XYPlot xType="ordinal" width={400} height={300}>
+                     <VerticalBarSeries
+                         animation
+                         data={closedRequests.map((n, i) => ({ x: `${i}`, y: n.request_number }))}
+                    />
+                </XYPlot> :
+                <div className="no-data-chart">No Data</div>
         }
     }
 
@@ -82,11 +90,13 @@ class Chart extends Component {
         return {
             totalSavingsAmount: Math.round(savingsAchieved.reduce((a, b) => a + b.savings_amount, 0)),
             chart: savingsAchieved.length ?
-                 <VerticalBarSeries
-                     animation
-                     data={savingsAchieved.map((n, i) => ({ x: `${i}`, y: n.savings_amount }))}
-                /> :
-                <div>No Data</div>
+                <XYPlot xType="ordinal" width={400} height={300}>
+                     <VerticalBarSeries
+                         animation
+                         data={savingsAchieved.map((n, i) => ({ x: `${i}`, y: n.savings_amount }))}
+                    />
+                </XYPlot> :
+                <div className="no-data-chart">No Data</div>
         }
     }
 
@@ -102,11 +112,13 @@ class Chart extends Component {
         return {
             averageOfResponse: Math.round(savingsAchieved.reduce((a, b) => a + b.supplier_response_cycle_time, 0) / savingsAchieved.length),
             chart: savingsAchieved.length ?
-                 <VerticalBarSeries
-                     animation
-                     data={savingsAchieved.map((n, i) => ({ x: `${i}`, y: n.request_number }))}
-                /> :
-                <div>No Data</div>
+                <XYPlot xType="ordinal" width={400} height={300}>
+                     <VerticalBarSeries
+                         animation
+                         data={savingsAchieved.map((n, i) => ({ x: `${i}`, y: n.request_number }))}
+                    />
+                </XYPlot> :
+                <div className="no-data-chart">No Data</div>
         }
     }
 
@@ -122,49 +134,37 @@ class Chart extends Component {
         return (
             <div className="charts-block">
                 <div className="charts-block__item">
-                    <XYPlot xType="ordinal" width={400} height={300}>
-                        {requestChart.chart}
-                    </XYPlot>
+                    {requestChart.chart}
                     <div className="charts-block__item_desc">
                         {`${requestChart.totalRequests} Requests`}
                     </div>
                 </div>
                 <div className="charts-block__item">
-                    <XYPlot xType="ordinal" width={400} height={300}>
-                        {spendPurchaseChart.chart}
-                    </XYPlot>
+                    {spendPurchaseChart.chart}
                     <div className="charts-block__item_desc">
                         {`$${spendPurchaseChart.totalQuotePrice} in spend (only on 'Closed Accepted' requests)`}
                     </div>
                 </div>
                 <div className="charts-block__item">
-                    <XYPlot xType="ordinal" width={400} height={300}>
-                        {provideQuoteChart.chart}
-                    </XYPlot>
+                    {provideQuoteChart.chart}
                     <div className="charts-block__item_desc">
                         {`Avg. ${provideQuoteChart.averageOfRequest} days - Request 2 Quote cycle time (only on quoted requests)`}
                     </div>
                 </div>
                 <div className="charts-block__item">
-                    <XYPlot xType="ordinal" width={400} height={300}>
-                        {closedRequestsChart.chart}
-                    </XYPlot>
+                    {closedRequestsChart.chart}
                     <div className="charts-block__item_desc">
                         {`${closedRequestsChart.totalRequests} Closed requests`}
                     </div>
                 </div>
                 <div className="charts-block__item">
-                    <XYPlot xType="ordinal" width={400} height={300}>
-                        {savingsAchievedChart.chart}
-                    </XYPlot>
+                    {savingsAchievedChart.chart}
                     <div className="charts-block__item_desc">
                         {`$${savingsAchievedChart.totalSavingsAmount} in savings (only on 'Closed Accepted' requests)`}
                     </div>
                 </div>
                 <div className="charts-block__item">
-                    <XYPlot xType="ordinal" width={400} height={300}>
-                        {respondForQuotesChart.chart}
-                    </XYPlot>
+                    {respondForQuotesChart.chart}
                     <div className="charts-block__item_desc">
                         {`Avg. ${respondForQuotesChart.averageOfResponse} days - Supplier response Cycle time (only on quoted requests)`}
                     </div>

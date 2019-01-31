@@ -106,7 +106,6 @@ class Home extends Component {
 
     render() {
         const { buyers, departments, requesters, information, isLoading } = this.state;
-        console.log('2112', information);
 
         return (
             <Spin size="large" spinning={isLoading}>

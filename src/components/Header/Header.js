@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { Menu, Icon } from 'antd';
 import './styles.scss';
 
@@ -23,20 +24,20 @@ class Header extends Component {
                 mode="horizontal"
             >
                 <Menu.Item key="dashboard">
-                    Dashboard
+                    <Link to="/">Dashboard</Link>
                 </Menu.Item>
-                <Menu.Item key="precision-buying">
-                    Precision Buying
+                <Menu.Item key="custom-chart">
+                    <Link to="/custom-chart">Custom Chart</Link>
                 </Menu.Item>
-                <Menu.Item key="requests">
-                    Requests
-                </Menu.Item>
-                <Menu.Item key="travel">
-                    Travel
-                </Menu.Item>
-                <Menu.Item key="analytics">
-                    Analytics
-                </Menu.Item>
+                {/*<Menu.Item key="requests">*/}
+                    {/*Requests*/}
+                {/*</Menu.Item>*/}
+                {/*<Menu.Item key="travel">*/}
+                    {/*Travel*/}
+                {/*</Menu.Item>*/}
+                {/*<Menu.Item key="analytics">*/}
+                    {/*Analytics*/}
+                {/*</Menu.Item>*/}
 
                 <SubMenu
                     style={{float: 'right'}}

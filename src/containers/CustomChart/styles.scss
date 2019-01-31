@@ -1,0 +1,62 @@
+.custom-chart {
+  width: 100%;
+  height: calc(100% - 48px);
+  padding: 20px 50px;
+
+  .top-filters {
+    display: block;
+    &__left {
+      display: inline-block;
+      width: 60%;
+      .dimensions {
+        display: inline-block;
+        width: 30%;
+      }
+      .measures {
+        display: inline-block;
+        width: 30%;
+        margin-left: 15px;
+      }
+      .ant-select-selection {
+        border: 1px solid #1f5b88;
+        .ant-select-selection__placeholder {
+          color: #1f5b88;
+        }
+      }
+      .ant-cascader-picker {
+        color: #1f5b88;
+        .ant-input {
+          border: 1px solid #1f5b88;
+        }
+      }
+    }
+    &__right {
+      display: inline-block;
+      width: 40%;
+      text-align: right;
+      .ant-calendar-picker-input {
+        border: 1px solid #1f5b88;
+        color: #1f5b88;
+      }
+    }
+  }
+
+  .charts {
+    margin-top: 50px;
+    &__title {
+      text-transform: uppercase;
+      font-size: 20px;
+      text-align: center;
+    }
+    &__items {
+      margin: 10px auto 0;
+      max-width: 600px;
+    }
+  }
+  .no-data {
+    text-transform: uppercase;
+    font-size: 20px;
+    text-align: center;
+    margin-top: 50px;
+  }
+}
