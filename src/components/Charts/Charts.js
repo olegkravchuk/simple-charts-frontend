@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { XYPlot, VerticalBarSeries } from 'react-vis';
 import './styles.scss';
 
 
-class Chart extends Component {
+class Charts extends PureComponent {
 
     renderRequestsChart = (data) => {
         const requestNumbers = data.map(item => Number(item.request_number)).filter(n => !Number.isNaN(n));
@@ -176,4 +176,4 @@ class Chart extends Component {
     }
 }
 
-export default Chart;
+export default Charts;

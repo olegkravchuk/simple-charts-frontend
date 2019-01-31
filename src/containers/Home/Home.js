@@ -1,16 +1,19 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { DatePicker, Spin, Select } from 'antd';
 import { getBuyers } from '../../api/buyer';
 import { getDepartments } from '../../api/department';
 import { getRequesters } from '../../api/requester';
 import { getInformation } from '../../api/information';
-import Chart from '../../components/Chart';
+import Charts from '../../components/Charts';
+import { filterInformation } from './services';
 import './styles.scss';
 
 const Option = Select.Option;
 const { RangePicker } = DatePicker;
 
-class Home extends Component {
+const filterOption = (input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+
+class Home extends PureComponent {
 
     state = {
         buyers: [],
@@ -45,26 +48,26 @@ class Home extends Component {
     }
 
     onChangeTeamMember = (value) => {
+        const { selectedDepartments, selectedRequesters, allInformation } = this.state;
         this.setState({
             selectedBuyers: value,
-        }, () => {
-            this.onFilterData();
+            information: filterInformation(value, selectedDepartments, selectedRequesters, allInformation),
         });
     }
 
     onChangeDepartment = (value) => {
+        const { selectedBuyers, selectedRequesters, allInformation } = this.state;
         this.setState({
             selectedDepartments: value,
-        }, () => {
-            this.onFilterData();
+            information: filterInformation(selectedBuyers, value, selectedRequesters, allInformation),
         });
     }
 
     onChangeCountry = (value) => {
+        const { selectedBuyers, selectedDepartments, allInformation } = this.state;
         this.setState({
             selectedRequesters: value,
-        }, () => {
-            this.onFilterData();
+            information: filterInformation(selectedBuyers, selectedDepartments, value, allInformation),
         });
     }
 
@@ -77,36 +80,17 @@ class Home extends Component {
         });
 
         getInformation({ from: from && from.format('MM-DD-YYYY'), to: to && to.format('MM-DD-YYYY')}).then(response => {
+            const { selectedBuyers, selectedDepartments, selectedRequesters } = this.state;
             this.setState({
-                information: response,
+                information: filterInformation(selectedBuyers, selectedDepartments, selectedRequesters, response),
                 allInformation: response,
                 isLoading: false
-            }, () => {
-                this.onFilterData();
             });
-        });
-    }
-
-    onFilterData = () => {
-        const { selectedBuyers, selectedDepartments, selectedRequesters } = this.state;
-        let information = [ ...this.state.allInformation ];
-
-        if (selectedBuyers.length) {
-            information = information.filter(item => selectedBuyers.includes(`${item.buyer}`));
-        } else if (selectedDepartments.length) {
-            information = information.filter(item => selectedDepartments.includes(`${item.department}`));
-        } else if (selectedRequesters.length) {
-            information = information.filter(item => selectedRequesters.includes(`${item.requester}`));
-        }
-
-        this.setState({
-            information,
         });
     }
 
     render() {
         const { buyers, departments, requesters, information, isLoading } = this.state;
-
         return (
             <Spin size="large" spinning={isLoading}>
                 <div className="home">
@@ -118,7 +102,7 @@ class Home extends Component {
                                 placeholder="Team Member"
                                 onChange={this.onChangeTeamMember}
                                 showSearch
-                                filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                                filterOption={filterOption}
                             >
                                 {buyers.map(item => <Option key={item.id}>{item.name}</Option>)}
                             </Select>
@@ -129,7 +113,7 @@ class Home extends Component {
                                 placeholder="Department"
                                 onChange={this.onChangeDepartment}
                                 showSearch
-                                filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                                filterOption={filterOption}
                             >
                                 {departments.map(item => <Option key={item.id}>{item.name}</Option>)}
                             </Select>
@@ -140,7 +124,7 @@ class Home extends Component {
                                 placeholder="Country"
                                 onChange={this.onChangeCountry}
                                 showSearch
-                                filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                                filterOption={filterOption}
                             >
                                 {requesters.map(item => <Option key={item.id}>{item.name}</Option>)}
                             </Select>
@@ -154,7 +138,7 @@ class Home extends Component {
                         <div className="charts">
                             <div className="charts__title">Tail spend metrics</div>
                             <div className="charts__items">
-                                <Chart data={information} />
+                                <Charts data={information} />
                             </div>
                         </div> :
                         <div className="no-data">No results</div>

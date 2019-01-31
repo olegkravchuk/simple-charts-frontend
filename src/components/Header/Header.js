@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, Icon } from 'antd';
 import './styles.scss';
@@ -6,7 +6,7 @@ import './styles.scss';
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
 
-class Header extends Component {
+class Header extends PureComponent {
     state = {
         current: 'dashboard',
     }

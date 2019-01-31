@@ -1,6 +1,5 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { DatePicker, Spin, Select, Cascader } from 'antd';
-import { XYPlot, VerticalBarSeries } from 'react-vis';
 import { getBuyers } from '../../api/buyer';
 import { getDepartments } from '../../api/department';
 import { getRequesters } from '../../api/requester';
@@ -8,35 +7,15 @@ import { getInformation } from '../../api/information';
 import { getCompanies } from '../../api/company';
 import { getCategories } from '../../api/category';
 import { getStatuses } from '../../api/status';
+import { measures } from './constants';
+import { filterInformation, convertDataForSelect } from './services';
+import { Chart } from './Chart';
 import './styles.scss';
 
 const Option = Select.Option;
 const { RangePicker } = DatePicker;
 
-const measures = [
-    {
-        title: 'Request Number',
-        value: 'request_number',
-    },
-    {
-        title: 'Total Estimated Price',
-        value: 'total_estimated_price',
-    },
-    {
-        title: 'Total Quote Price',
-        value: 'total_quote_price',
-    },
-    {
-        title: 'Savings amount',
-        value: 'savings_amount',
-    },
-    {
-        title: 'Savings %',
-        value: 'savings_percent',
-    },
-];
-
-class CustomChart extends Component {
+class CustomChart extends PureComponent {
 
     state = {
         allInformation: [],
@@ -61,40 +40,16 @@ class CustomChart extends Component {
             getBuyers(),
             getInformation(),
         ]).then(([companies, requesters, departments, categories, statuses, buyers, information]) => {
-            const options = [
-                {
-                    value: 'company',
-                    label: 'Company',
-                    children: companies.map(item => ({ value: item.id, label: item.name })),
-                },
-                {
-                    value: 'requester',
-                    label: 'Requester Name',
-                    children: requesters.map(item => ({ value: item.id, label: item.name })),
-                },
-                {
-                    value: 'department',
-                    label: 'Department',
-                    children: departments.map(item => ({ value: item.id, label: item.name })),
-                },
-                {
-                    value: 'category',
-                    label: 'Category',
-                    children: categories.map(item => ({ value: item.id, label: item.name })),
-                },
-                {
-                    value: 'status',
-                    label: 'Status',
-                    children: statuses.map(item => ({ value: item.id, label: item.name })),
-                },
-                {
-                    value: 'buyer',
-                    label: 'Buyer',
-                    children: buyers.map(item => ({ value: item.id, label: item.name })),
-                },
-            ];
+
             this.setState({
-                options,
+                options: convertDataForSelect({
+                    company: companies,
+                    requester: requesters,
+                    department: departments,
+                    category: categories,
+                    status: statuses,
+                    buyer: buyers,
+                }),
                 information,
                 allInformation: information,
                 isLoading: false,
@@ -103,18 +58,18 @@ class CustomChart extends Component {
     }
 
     onChangeDimension = (value) => {
+        const { selectedMeasures,  allInformation } = this.state;
         this.setState({
             selectedDimension: value,
-        }, () => {
-            this.onFilterData();
+            information: filterInformation(selectedMeasures, value, allInformation),
         });
     }
 
     onChangeMeasures = (value) => {
+        const { selectedDimension,  allInformation } = this.state;
         this.setState({
             selectedMeasures: value,
-        }, () => {
-            this.onFilterData();
+            information: filterInformation(value, selectedDimension, allInformation),
         });
     }
 
@@ -127,32 +82,28 @@ class CustomChart extends Component {
         });
 
         getInformation({ from: from && from.format('MM-DD-YYYY'), to: to && to.format('MM-DD-YYYY')}).then(response => {
+            const { selectedDimension,  selectedMeasures } = this.state;
             this.setState({
-                information: response,
+                information: filterInformation(selectedMeasures, selectedDimension, response),
                 allInformation: response,
                 isLoading: false
-            }, () => {
-                this.onFilterData();
             });
         });
     }
 
-    onFilterData = () => {
-        const { selectedMeasures, selectedDimension } = this.state;
+    renderChart = () => {
+        const { isLoading, information, selectedMeasures, selectedDimension } = this.state;
+        if (!isLoading && information.length && selectedMeasures && selectedDimension.length) {
+            const data = information.map(item => Number(item[selectedMeasures])).filter(n =>
+                !Number.isNaN(n)).map((y, i) => ({ x: `${i}`, y, }));
 
-        if (selectedMeasures && selectedDimension.length) {
-            let information = [ ...this.state.allInformation ];
-            const [field, value] = selectedDimension;
-            information = information.filter(item => item[field] === value);
-            this.setState({
-                information,
-            });
+            return (<Chart data={data} width={600} height={400} />);
         }
+        return (<div className="no-data">No results</div>);
     }
 
     render() {
-        const { options, information, selectedMeasures, selectedDimension, isLoading } = this.state;
-        const data = information.map(item => Number(item[selectedMeasures])).filter(n => !Number.isNaN(n)).map((y, i) => ({ x: `${i}`, y, }));
+        const { options, selectedMeasures, selectedDimension, isLoading } = this.state;
         return (
             <Spin size="large" spinning={isLoading}>
                 <div className="custom-chart">
@@ -182,24 +133,10 @@ class CustomChart extends Component {
                     {!selectedMeasures || !selectedDimension.length ?
                         <div className="no-data">
                             Please enter Measure and Dimension
-                        </div> : !isLoading && information.length ?
-                            <div className="charts">
-                                <div className="charts__title">Custom Chart</div>
-                                <div className="charts__items">
-                                    {data.length ?
-                                        <XYPlot xType="ordinal" width={600} height={400}>
-                                            <VerticalBarSeries
-                                                animation
-                                                data={data}
-                                            />
-                                        </XYPlot> :
-                                        <div className="no-data-chart">No Data</div>
-                                    }
-                                </div>
-                            </div> :
-                            <div className="no-data">No results</div>
+                        </div> : null
                     }
 
+                    {this.renderChart()}
                 </div>
             </Spin>
         );

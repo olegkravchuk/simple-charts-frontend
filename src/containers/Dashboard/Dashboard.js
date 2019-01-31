@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import Home from '../Home';
 import CustomChart from '../CustomChart';
@@ -6,7 +6,7 @@ import Header from '../../components/Header';
 import './styles.scss';
 
 
-class Dashboard extends Component {
+class Dashboard extends PureComponent {
     render() {
         return (
             <div className="dashboard">
