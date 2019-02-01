@@ -10,7 +10,7 @@ class Charts extends PureComponent {
         const requestNumbers = data.map(item => Number(item.request_number)).filter(n => !Number.isNaN(n));
 
         return {
-            totalRequests: requestNumbers.reduce((a, b) => a + b, 0),
+            totalRequests: requestNumbers.length,
             chart: requestNumbers.length ?
                 <XYPlot xType="ordinal" width={400} height={300}>
                      <VerticalBarSeries
@@ -70,7 +70,7 @@ class Charts extends PureComponent {
         })).filter(n => !Number.isNaN(n.request_number) && n.status === 5);
 
         return {
-            totalRequests: closedRequests.reduce((a, b) => a + b.request_number, 0),
+            totalRequests: closedRequests.length,
             chart: closedRequests.length ?
                 <XYPlot xType="ordinal" width={400} height={300}>
                      <VerticalBarSeries
